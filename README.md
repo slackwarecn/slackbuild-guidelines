@@ -32,12 +32,16 @@
 
 > 关于如何签名提交可以参考[这里](http://arondight.me/2016/04/17/%E4%BD%BF%E7%94%A8GPG%E7%AD%BE%E5%90%8DGit%E6%8F%90%E4%BA%A4%E5%92%8C%E6%A0%87%E7%AD%BE/)。
 
+### Use master branch
+
+必须使用master 分支来存放你的SlackBuild。
+
 ### Add "The Slackware Linux CN Community" to Copyright
 
 你需要在脚本的源文件中显式写明版权信息并在其中加入`The Slackware Linux CN Community`。一个例子如下。
 
 ```bash
-# Copyright (c) 2016 nnnewb <weak_ptr>,
+# Copyright (c) 2016 nnnewb (https://github.com/nnnewb),
 #                    Arondight <shell_way@foxmail.com>,
 #                    The Slackware Linux CN Community (https://github.com/slackwarecn)
 # All rights reserved.
