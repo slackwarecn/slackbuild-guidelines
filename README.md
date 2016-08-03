@@ -22,9 +22,19 @@
 
 > 所以也请写可读性高的代码。
 
+### Sign your commit with GPG as far as possible
+
+请尽量使用你的GPG 密钥环签名你的提交，你需要在项目中额外增加`fingerprint` 文件来写明你的主钥指纹。一个例子如下。
+
+```
+4444 9495 01B3 CC2A 7657  9C08 25FF D92A B66C C194
+```
+
+> 关于如何签名提交可以参考[这里](http://arondight.me/2016/04/17/%E4%BD%BF%E7%94%A8GPG%E7%AD%BE%E5%90%8DGit%E6%8F%90%E4%BA%A4%E5%92%8C%E6%A0%87%E7%AD%BE/)。
+
 ### Add "The Slackware Linux CN Community" to Copyright
 
-你需要在脚本的源文件中显式写明版权信息并在其中加入`The Slackware Linux CN Community`，一个例子如下。
+你需要在脚本的源文件中显式写明版权信息并在其中加入`The Slackware Linux CN Community`。一个例子如下。
 
 ```bash
 # Copyright (c) 2016 nnnewb <weak_ptr>,
@@ -78,7 +88,7 @@ $ PKGTYPE=tgz TAG="_$(whoami)" ./PRGNAM.SlackBuild
 
 这是一个约定俗成的规范。
 
-### Use "set -e" at the very beginning of script
+### Use `set -e` at the very beginning of script
 
 当你的脚本有指令执行失败时，脚本应该停止执行。你可以在你脚本的最开始使用它。
 
@@ -111,7 +121,7 @@ set -e
 你需要计算好所有需要的包，无论是构建还是运行时需要的，并将其写入到`${PRGNAM}.info` 文件中。一个例子如下。
 
 ```bash
-REQUIRES="alsa-lib gst-libav gst-plugins-base gst-plugins-good gst-plugins-ugly kconfig libcue libxkbcommon mozilla-nss qt5"
+REQUIRES="packageA packageB"
 ```
 
 ### `slack-desc` with at least 11 lines
@@ -204,3 +214,4 @@ done
 ### Test your SlackBuild and packages
 
 你需要自己测试一遍SlackBuild 是否能够正确生成软件包，以及测试软件包是否能够正常工作。
+
