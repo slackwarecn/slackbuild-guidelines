@@ -138,27 +138,6 @@ set -e
 REQUIRES="packageA packageB"
 ```
 
-### `slack-desc` with at least 11 lines
-
-你需要将软件包的说明写入`slack-desc` 文件中，这个文件以`PRGNAM:` 的行会在安装包时被打印，在`slack-desc` 中应该至少有11 行可以被打印的内容（即使是空行）。
-
-在其中你需要写明包名、软件名称、软件说明和主页。一个例子如下。
-
-```
-       |-----handy-ruler------------------------------------------------------|
-extra-cmake-modules: extra-cmake-modules (Extra modules and scripts for CMake)
-extra-cmake-modules:
-extra-cmake-modules: The Extra CMake Modules package, or ECM, adds to the modules provided by CMake,
-extra-cmake-modules: including ones used by find_package() to find common software,
-extra-cmake-modules: ones that can be used directly in CMakeLists.txt files to
-extra-cmake-modules: perform common tasks and toolchain files that must be specified on
-extra-cmake-modules: the commandline by the user.
-extra-cmake-modules:
-extra-cmake-modules:
-extra-cmake-modules: Homepage: https://community.kde.org/Frameworks
-extra-cmake-modules:
-```
-
 ### Test your SlackBuild and packages
 
 你需要自己测试一遍SlackBuild 是否能够正确生成软件包，以及测试软件包是否能够正常工作。
