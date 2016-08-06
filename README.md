@@ -6,7 +6,19 @@
 
 阅读这份规范之前，默认你已经阅读、理解并遵守[SlackBuilds.org](https://slackbuilds.org/) 的[Guidelines](https://slackbuilds.org/guidelines/)。
 
+## 模板
+
+你可以在[emplates](templates) 目录查看我们正在使用的SlackBuild 模板。
+
 ## 规范
+
+### Place you build at The Slackware Linux CN Community SlackBuilds
+
+每一个SlackBuild 都使用Git 仓库的形式存放，你需要成为[slackwarecn-slackbuilds](https://github.com/slackwarecn-slackbuilds) 的成员，在这里新建项目，并将你的SlackBuilds 推送上来。
+
+### PRGNAM is repository name
+
+你的Git 项目名称必须和SlackBuild 脚本中的`$PRGNAM` 一致（包括大小写）。
 
 ### Use space instead of tab
 
@@ -21,6 +33,22 @@
 在你的所有文件中避免使用非英文单词，因为你的SlackBuild 会被世界各地的人阅读。
 
 > 所以也请写可读性高的代码。
+
+### Use bash as shebang
+
+你需要将shebang 设置为bash。因为`sh` 是一个软连接，通常来说它指向`bash`，但是`sh` 是不可靠的，它可以被用户修改，而`bash` 是可靠的。
+
+```bash
+#!/usr/bin/env bash
+```
+
+### Add executable permission to you SlackBuild
+
+你需要为你的SlackBuild 脚本增加可执行权限，否则shebang 将没有任何意义。
+
+### Avoid to use root
+
+请确保你的Build 脚本**不需要使用**root 权限即可成功构建软件包，否则你的Build 将不会被收录于[repo](https://github.com/slackwarecn/repo)。
 
 ### Sign your commit with GPG as far as possible
 
@@ -46,22 +74,6 @@
 #                    The Slackware Linux CN Community (https://github.com/slackwarecn)
 # All rights reserved.
 ```
-
-### Use bash as shebang
-
-你需要将shebang 设置为bash。
-
-```bash
-#!/usr/bin/env bash
-```
-
-因为`sh` 是一个软连接，通常来说它指向`bash`，但是`sh` 是不可靠的，它可以被用户修改，而`bash` 是可靠的。
-
-### Avoid to use root
-
-请确保你的Build 脚本不需要使用root 权限，否则你的Build 将不会被收录于[repo](https://github.com/slackwarecn/repo)。
-
-因为在软件的Build 过程中一定是可以避免使用root 权限的，并且使用root 权限的SlackBuild 通常被用户拒绝执行。
 
 ### Write `doinst.sh` even it is useless
 
