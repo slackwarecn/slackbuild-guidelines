@@ -8,7 +8,7 @@
 
 ## 模板
 
-你可以在[emplates](templates) 目录查看我们正在使用的SlackBuild 模板。
+你可以在[emplates](templates) 目录查看我们正在使用的SlackBuild 模板，请按照模板的格式编写SlackBuild。
 
 ## 规范
 
@@ -64,14 +64,12 @@
 
 必须使用master 分支来存放你的SlackBuild。
 
-### Add "The Slackware Linux CN Community" to Copyright
+### Add your name to Copyright
 
-你需要在脚本的源文件中显式写明版权信息并在其中加入`The Slackware Linux CN Community`。一个例子如下。
+你需要在脚本的源文件中显式写明版权信息并在其中加入你的名字。一个例子如下。
 
 ```bash
-# Copyright (c) 2016 nnnewb (https://github.com/nnnewb),
-#                    Arondight <shell_way@foxmail.com>,
-#                    The Slackware Linux CN Community (https://github.com/slackwarecn)
+# Copyright (c) 2016 Arondight <shell_way@foxmail.com>,
 # All rights reserved.
 ```
 

@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Slackware build script for <appname>
 
-# Copyright <year> <you> <where you live>
+# Copyright (c) <Year> <Your Name> [<Your Email>|(Your Website)]
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -47,36 +47,39 @@
 # DELETE THIS BLOCK OF TEXT WITHOUT BOTHERING TO READ WHAT'S IN IT.
 #
 # |-----------------------------------------------------------------| #
+set -e
 
-PRGNAM=perl-appname		# replace "appname" with name of program
-VERSION=${VERSION:-1.4.1}	# replace with version of program
+PRGNAM='perl-appname'       # Replace "appname" with name of program
+VERSION=${VERSION:-1.4.1}   # Replace with version of program
 BUILD=${BUILD:-1}
-TAG=${TAG:-_SBo}		# the "_SBo" is required
-
-SRCNAM="$(printf $PRGNAM | cut -d- -f2-)"
+TAG=${TAG:-_SBo}            # The "_SBo" is required
+SRCNAM=$(printf $PRGNAM | cut -d- -f2-)
+CWD=$(pwd)
+TMP=${TMP:-/tmp/SBo}        # For consistency's sake, use this
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp}      # Drop the package in /tmp
+MAKEFLAGS=${MAKEFLAGS:--j8}
 
 # Automatically determine the architecture we're building on:
-if [ -z "$ARCH" ]; then
-  case "$( uname -m )" in
+if [[ -z $ARCH ]]; then
+  case "$(uname -m)" in
     i?86) ARCH=i586 ;;
     arm*) ARCH=arm ;;
-# Unless $ARCH is already set, use uname -m for all other archs:
-       *) ARCH=$( uname -m ) ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+       *) ARCH=$(uname -m) ;;
   esac
 fi
 
-CWD=$(pwd)
-TMP=${TMP:-/tmp/SBo}		# For consistency's sake, use this
-PKG=$TMP/package-$PRGNAM
-OUTPUT=${OUTPUT:-/tmp}		# Drop the package in /tmp
-
-if [ "$ARCH" = "i586" ]; then
-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
-  LIBDIRSUFFIX=""
-elif [ "$ARCH" = "x86_64" ]; then
+if [[ 'i586' == $ARCH ]]
+then
+  SLKCFLAGS='-O2 -march=i586 -mtune=i686'
+  LIBDIRSUFFIX=''
+elif [[ 'i686' == $ARCH ]]
+then
+  SLKCFLAGS='-O2 -march=i686 -mtune=i686'
+  LIBDIRSUFFIX=''
+elif [[ "x86_64" == $ARCH ]]
+then
   SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
 else
@@ -84,35 +87,35 @@ else
   LIBDIRSUFFIX=""
 fi
 
-set -e 
-
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
+
 cd $TMP
-rm -rf $SRCNAM-$VERSION
-tar xvf $CWD/$SRCNAM-$VERSION.tar.gz
-cd $SRCNAM-$VERSION
-chown -R root:root .
+rm -rvf $PRGNAM-$VERSION
+tar -zxvf "${CWD}/${PRGNAM-$VERSION}.tar.gz"
+#tar -jxvf "${CWD}/${PRGNAM-$VERSION}.tar.bz2"
+#tar -Jxvf "${CWD}/${PRGNAM-$VERSION}.tar.xz"
+cd "${PRGNAM}-${VERSION}"
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
-  -o -perm 511 \) -exec chmod 755 {} \; -o \
+  -o -perm 511 \) -exec chmod -v 755 {} \; -o \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+  -o -perm 440 -o -perm 400 \) -exec chmod -v 644 {} \;
 
 # Your application may need different flags; these are provided as examples
 # There seem to be two different methods for building perl apps:
 
-# Build method #1
+# Build method #1, use ExtUtils::MakeMaker
 perl Makefile.PL \
   PREFIX=/usr \
   INSTALLDIRS=vendor \
   INSTALLVENDORMAN1DIR=/usr/man/man1 \
   INSTALLVENDORMAN3DIR=/usr/man/man3
-make
-make test
-make install DESTDIR=$PKG
+make $MAKEFLAGS
+make $MAKEFLAGS test
+make $MAKEFLAGS install DESTDIR=$PKG
 
-# Build method #2
+# Build method #2, use Module::Build
 perl Build.PL \
   prefix /usr \
   installdirs vendor
@@ -123,36 +126,57 @@ perl Build.PL \
   --install_path bindoc=/usr/man/man1 \
   --install_path libdoc=/usr/man/man3
 
-# Strip binaries and libraries - 
+# Strip binaries and libraries -
 # If this is not needed,remove it from the script.
-find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
-  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+find $PKG -print0 \
+  | xargs -0 file \
+  | grep -e "executable" -e "shared object" \
+  | grep ELF \
+  | cut -f 1 -d : \
+  | xargs strip --strip-unneeded \
+  2> /dev/null || :
 
 # Compress man pages
-find $PKG/usr/man -type f -exec gzip -9 {} \;
-for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+find "${PKG}/usr/man" -type f -exec gzip -9 {} \;
+for file in $(find $PKG/usr/man -type l)
+do
+  ln -sv $(readlink $file).gz $file.gz
+  rm $file
+done
 
 # Remove perllocal.pod and other special files that don't need to be installed,
 # as they will overwrite what's already on the system.
-find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f || true
+find $PKG -name perllocal.pod \
+  -o -name ".packlist" \
+  -o -name "*.bs" \
+  | xargs rm -vf
 
 # Remove empty directories
-find $PKG -depth -type d -empty -delete || true
+find $PKG -depth -type d -empty -delete || :
 
 # Copy program documentation into the package
 # The included documentation varies from one application to another, so be sure
 # to adjust your script as needed
 # Also, include the SlackBuild script in the documentation directory
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a \
-  <documentation> \
-  $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+mkdir -pv "${PKG}/usr/doc/${PRGNAM}-${VERSION}"
+cp -av \
+  /path/to/documentation \
+  "${PKG}/usr/doc/${PRGNAM}-${VERSION}"
+install -Dv -m0644 "${CWD}/${PRGNAM}.SlackBuild" \
+                   "${PKG}/usr/doc/${PRGNAM}-${VERSION}/${PRGNAM}.SlackBuild"
 
-# Copy the slack-desc into ./install
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
+# Copy the slack-desc (and a custom doinst.sh if necessary) into ./install
+mkdir -p "${PKG}/install"
+install -Dv -m0644 "${CWD}/slack-desc" "${PKG}/install/slack-desc"
+install -Dv -m0644 "${CWD}/doinst.sh" "${PKG}/install/doinst.sh"
 
 # Make the package; be sure to leave it in $OUTPUT
+# If package symlinks need to be created during install *before*
+# your custom contents of doinst.sh runs, then add the -p switch to
+# the makepkg command below -- see makepkg(8) for details
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
+/sbin/makepkg -l y -c n \
+  "${OUTPUT}/${PRGNAM}-${VERSION}-${ARCH}-${BUILD$TAG}.${PKGTYPE:-tgz}"
+
+exit $?
+
